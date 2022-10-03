@@ -20,7 +20,7 @@ export const Chatroom = () => {
     }, [userData]);
 
     const connect =()=>{
-        let Sock = new SockJS(process.env.API_LINK + ':' + process.env.API_PORT + '/ws');
+        let Sock = new SockJS(process.env.API_LINK + '/ws');
         stompClient = over(Sock);
         stompClient.connect({},onConnected, onError);
     }
