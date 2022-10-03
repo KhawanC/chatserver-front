@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {over} from 'stompjs';
 import SockJS from 'sockjs-client';
-
 var stompClient = null;
 
 export const Chatroom = () => {
@@ -15,12 +14,10 @@ export const Chatroom = () => {
         connected: false,
         message: ''
       });
-    useEffect(() => {
-      console.log(userData);
-    }, [userData]);
 
-    const connect =()=>{
-        let Sock = new SockJS(process.env.API_LINK + '/ws');
+    const connect = () => {
+        console.log(process.env.REACT_APP_WEB_SOCKET_URI)
+        let Sock = new SockJS(process.env.REACT_APP_WEB_SOCKET_URI);
         stompClient = over(Sock);
         stompClient.connect({},onConnected, onError);
     }
@@ -32,7 +29,7 @@ export const Chatroom = () => {
         userJoin();
     }
 
-    const userJoin=()=>{
+    const userJoin = () => {
           var chatMessage = {
             senderName: userData.username,
             status:"JOIN"
@@ -40,7 +37,7 @@ export const Chatroom = () => {
           stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
     }
 
-    const onMessageReceived = (payload)=>{
+    const onMessageReceived = (payload) => {
         var payloadData = JSON.parse(payload.body);
         switch(payloadData.status){
             case "JOIN":
@@ -53,11 +50,12 @@ export const Chatroom = () => {
                 publicChats.push(payloadData);
                 setPublicChats([...publicChats]);
                 break;
+            default:
+                break;
         }
     }
     
-    const onPrivateMessage = (payload)=>{
-        console.log(payload);
+    const onPrivateMessage = (payload) => {
         var payloadData = JSON.parse(payload.body);
         if(privateChats.get(payloadData.senderName)){
             privateChats.get(payloadData.senderName).push(payloadData);
@@ -71,15 +69,13 @@ export const Chatroom = () => {
     }
 
     const onError = (err) => {
-        console.log(err);
-        
     }
 
-    const handleMessage =(event)=>{
+    const handleMessage = (event) => {
         const {value}=event.target;
         setUserData({...userData,"message": value});
     }
-    const sendValue=()=>{
+    const sendValue = () => {
             if (stompClient) {
               var chatMessage = {
                 senderName: userData.username,
@@ -92,7 +88,7 @@ export const Chatroom = () => {
             }
     }
 
-    const sendPrivateValue=()=>{
+    const sendPrivateValue = () => {
         if (stompClient) {
           var chatMessage = {
             senderName: userData.username,
@@ -110,12 +106,12 @@ export const Chatroom = () => {
         }
     }
 
-    const handleUsername=(event)=>{
+    const handleUsername = (event) => {
         const {value}=event.target;
         setUserData({...userData,"username": value});
     }
 
-    const registerUser=()=>{
+    const registerUser = () => {
         connect();
     }
 
