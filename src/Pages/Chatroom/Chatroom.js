@@ -16,9 +16,10 @@ export const Chatroom = () => {
       });
 
     const connect = () => {
-        let Sock = new SockJS('http://localhost:8080/ws');
+        console.log(process.env.REACT_APP_WEB_SOCKET_URI)
+        let Sock = new SockJS(process.env.REACT_APP_WEB_SOCKET_URI);
         stompClient = over(Sock);
-        stompClient.connect({}, onConnected, onError);
+        stompClient.connect({},onConnected, onError);
     }
 
     const onConnected = () => {
